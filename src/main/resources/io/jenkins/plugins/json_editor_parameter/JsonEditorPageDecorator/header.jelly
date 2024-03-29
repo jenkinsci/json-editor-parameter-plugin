@@ -1,4 +1,0 @@
-<?jelly escape-by-default='true'?>
-<j:jelly xmlns:j="jelly:core">
-  <script src="https://cdn.jsdelivr.net/npm/@json-editor/json-editor@2.14.0/dist/jsoneditor.min.js"></script>
-</j:jelly>

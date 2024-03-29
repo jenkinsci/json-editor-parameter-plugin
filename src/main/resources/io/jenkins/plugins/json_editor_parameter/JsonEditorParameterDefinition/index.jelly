@@ -1,7 +1,7 @@
 <?jelly escape-by-default='true'?>
-<j:jelly xmlns:j="jelly:core">
+<j:jelly xmlns:j="jelly:core" xmlns:st="jelly:stapler">
 
-  <div id='editor:${it.name}:holder'/>
+  <div class="editor-holder" data-name="${it.name}"/>
   <div id='editor:${it.name}:options' hidden="hidden"><j:out value='${it.getMergedOptions()}'/></div>
 
   <div name="parameter">
@@ -9,17 +9,7 @@
     <input id='editor:${it.name}:value' name='value' type='hidden'/>
   </div>
 
-  <script>
-  {
-    const holderElement = document.getElementById('editor:${it.name}:holder')
-    const valueElement = document.getElementById('editor:${it.name}:value')
-
-    const options = JSON.parse(document.getElementById('editor:${it.name}:options').textContent)
-    valueElement.value = JSON.stringify(options.startval)
-
-    const editor = new JSONEditor(holderElement, options)
-    editor.on('change', function() { valueElement.value = JSON.stringify(editor.getValue()) } );
-  }
-  </script>
+  <st:adjunct includes="io.jenkins.plugins.json_editor_parameter.JsonEditorParameterDefinition.jsoneditor" />
+  <st:adjunct includes="io.jenkins.plugins.json_editor_parameter.JsonEditorParameterDefinition.jsoneditor_min" />
 
 </j:jelly>
