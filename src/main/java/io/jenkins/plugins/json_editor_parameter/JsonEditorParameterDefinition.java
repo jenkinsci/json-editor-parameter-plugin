@@ -2,6 +2,7 @@ package io.jenkins.plugins.json_editor_parameter;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import hudson.Extension;
+import hudson.Util;
 import hudson.model.ParameterDefinition;
 import hudson.model.ParameterValue;
 import hudson.util.FormValidation;
@@ -30,7 +31,7 @@ public class JsonEditorParameterDefinition extends ParameterDefinition {
     private static final Pattern OK_NAME = Pattern.compile("[A-Za-z][\\w-]{0,63}");
 
     private String schema;
-    private String startval = "{}";
+    private String startval;
     private String options = "{}";
 
     @DataBoundConstructor
@@ -61,7 +62,10 @@ public class JsonEditorParameterDefinition extends ParameterDefinition {
 
     @DataBoundSetter
     public void setStartval(String startval) {
-        checkValidJson(startval, "startval must be valid json");
+        startval = Util.fixEmptyAndTrim(startval);
+        if (startval != null) {
+            checkValidJson(startval, "startval must be valid json or empty.");
+        }
         this.startval = startval;
     }
 
@@ -74,7 +78,9 @@ public class JsonEditorParameterDefinition extends ParameterDefinition {
     @Restricted(DoNotUse.class) // invoked from index.jelly
     public String getMergedOptions() {
         Map<String, Object> optionMap = new HashMap<>(JsonUtil.toMap(options));
-        optionMap.put("startval", JsonUtil.toObject(startval));
+        if (startval != null) {
+            optionMap.put("startval", JsonUtil.toObject(startval));
+        }
         optionMap.put("schema", JsonUtil.toMap(schema));
         return JsonUtil.toJson(optionMap);
     }
@@ -155,7 +161,10 @@ public class JsonEditorParameterDefinition extends ParameterDefinition {
         @POST
         public FormValidation doCheckStartval(@QueryParameter String startval) {
             Jenkins.get().checkPermission(Jenkins.READ);
-            return isValidJson(startval, "startval must be valid json");
+            if (Util.fixEmptyAndTrim(startval) == null) {
+                return FormValidation.ok();
+            }
+            return isValidJson(startval, "startval must be valid json or empty");
         }
 
         @Override
