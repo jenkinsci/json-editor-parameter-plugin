@@ -1,13 +1,15 @@
 <?jelly escape-by-default='true'?>
-<j:jelly xmlns:j="jelly:core">
+<j:jelly xmlns:j="jelly:core" xmlns:f="/lib/form">
+  <j:set var="escapeEntryTitleAndDescription" value="false"/>
+  <f:entry description="${it.formattedDescription}" title="${h.escape(it.name)}">
+    <div id='editor:${it.name}:holder'/>
+    <div id='editor:${it.name}:options' hidden="hidden"><j:out value='${it.getMergedOptions()}'/></div>
 
-  <div id='editor:${it.name}:holder'/>
-  <div id='editor:${it.name}:options' hidden="hidden"><j:out value='${it.getMergedOptions()}'/></div>
-
-  <div name="parameter">
-    <input name='name' value='${it.name}' type='hidden'/>
-    <input id='editor:${it.name}:value' name='value' type='hidden'/>
-  </div>
+    <div name="parameter">
+      <input name='name' value='${it.name}' type='hidden'/>
+      <input id='editor:${it.name}:value' name='value' type='hidden'/>
+    </div>
+  </f:entry>
 
   <script>
   {

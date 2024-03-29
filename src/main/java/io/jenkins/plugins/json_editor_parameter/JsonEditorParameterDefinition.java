@@ -2,8 +2,8 @@ package io.jenkins.plugins.json_editor_parameter;
 
 import edu.umd.cs.findbugs.annotations.NonNull;
 import hudson.Extension;
-import hudson.model.ParameterDefinition;
 import hudson.model.ParameterValue;
+import hudson.model.SimpleParameterDefinition;
 import hudson.util.FormValidation;
 import java.util.HashMap;
 import java.util.Map;
@@ -25,7 +25,7 @@ import org.kohsuke.stapler.verb.POST;
 
 @EqualsAndHashCode(callSuper = true)
 @Getter
-public class JsonEditorParameterDefinition extends ParameterDefinition {
+public class JsonEditorParameterDefinition extends SimpleParameterDefinition {
 
     private static final Pattern OK_NAME = Pattern.compile("[A-Za-z][\\w-]{0,63}");
 
@@ -98,21 +98,16 @@ public class JsonEditorParameterDefinition extends ParameterDefinition {
         return value;
     }
 
-    @Override
-    public JsonEditorParameterValue createValue(StaplerRequest request) {
-        String[] value = request.getParameterValues(getName());
-        if (value == null) {
-            return null;
-        } else if (value.length != 1) {
-            throw new IllegalArgumentException(
-                    "Illegal number of parameter values for " + getName() + ": " + value.length);
-        } else {
-            return createValue(value[0]);
-        }
+    public JsonEditorParameterValue createValue(String json) {
+        return new JsonEditorParameterValue(getName(), json, getDescription());
     }
 
-    public JsonEditorParameterValue createValue(String json) {
-        return new JsonEditorParameterValue(getName(), json);
+    @Override
+    public JsonEditorParameterValue getDefaultParameterValue() {
+        if (startval == null) {
+            return null;
+        }
+        return new JsonEditorParameterValue(getName(), startval, getDescription());
     }
 
     @Extension
@@ -156,18 +151,6 @@ public class JsonEditorParameterDefinition extends ParameterDefinition {
         public FormValidation doCheckStartval(@QueryParameter String startval) {
             Jenkins.get().checkPermission(Jenkins.READ);
             return isValidJson(startval, "startval must be valid json");
-        }
-
-        @Override
-        public JsonEditorParameterDefinition newInstance(StaplerRequest req, JSONObject formData) {
-            String name = formData.getString("name");
-            JsonEditorParameterDefinition def = new JsonEditorParameterDefinition(name);
-
-            def.setSchema(formData.getString("schema"));
-            def.setStartval(formData.getString("startval"));
-            def.setOptions(formData.getString("options"));
-
-            return def;
         }
 
         @Override
