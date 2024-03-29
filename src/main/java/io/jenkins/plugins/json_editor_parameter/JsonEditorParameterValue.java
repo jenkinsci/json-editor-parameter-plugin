@@ -1,6 +1,9 @@
 package io.jenkins.plugins.json_editor_parameter;
 
+import hudson.EnvVars;
 import hudson.model.ParameterValue;
+import hudson.model.Run;
+import java.util.Locale;
 import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import org.kohsuke.stapler.DataBoundConstructor;
@@ -15,6 +18,12 @@ public class JsonEditorParameterValue extends ParameterValue {
     public JsonEditorParameterValue(String name, String value) {
         super(name);
         this.json = value;
+    }
+
+    @Override
+    public void buildEnvironment(Run<?, ?> build, EnvVars env) {
+        env.put(name, json);
+        env.put(name.toUpperCase(Locale.ENGLISH), json); // backward compatibility pre 1.345
     }
 
     @Override
