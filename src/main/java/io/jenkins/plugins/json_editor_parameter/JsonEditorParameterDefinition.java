@@ -3,7 +3,6 @@ package io.jenkins.plugins.json_editor_parameter;
 import edu.umd.cs.findbugs.annotations.NonNull;
 import hudson.Extension;
 import hudson.Util;
-import hudson.model.ParameterDefinition;
 import hudson.model.ParameterValue;
 import hudson.model.SimpleParameterDefinition;
 import hudson.util.FormValidation;
