@@ -1,0 +1,8 @@
+.row {
+  margin: 5px 10px;
+}
+
+.je-modal {
+  z-index: 9999!important;
+  background-color: var(--input-color);
+}

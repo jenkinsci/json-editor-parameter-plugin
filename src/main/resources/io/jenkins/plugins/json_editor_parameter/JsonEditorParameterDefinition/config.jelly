@@ -13,7 +13,7 @@
   </f:entry>
 
   <f:entry title='Start Values' field='startval'>
-    <f:textarea default='{}'/>
+    <f:textarea/>
   </f:entry>
 
   <f:entry title='Options' field='options'>
