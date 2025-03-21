@@ -5,7 +5,7 @@
   <parent>
     <groupId>org.jenkins-ci.plugins</groupId>
     <artifactId>plugin</artifactId>
-    <version>4.82</version>
+    <version>5.9</version>
     <relativePath />
   </parent>
 
@@ -38,9 +38,8 @@
     <gitHubRepo>jenkinsci/${project.artifactId}-plugin</gitHubRepo>
 
     <!-- https://www.jenkins.io/doc/developer/plugin-development/choosing-jenkins-baseline/ -->
-    <jenkins.baseline>2.426</jenkins.baseline>
+    <jenkins.baseline>2.479</jenkins.baseline>
     <jenkins.version>${jenkins.baseline}.3</jenkins.version>
-    <maven.version>3.8.1</maven.version>
     <revision>1.0</revision>
     <spotless.check.skip>false</spotless.check.skip>
   </properties>
@@ -51,7 +50,7 @@
         <!-- Pick up common dependencies for the selected LTS line: https://github.com/jenkinsci/bom#usage -->
         <groupId>io.jenkins.tools.bom</groupId>
         <artifactId>bom-${jenkins.baseline}.x</artifactId>
-        <version>2928.ved44ea_84e034</version>
+        <version>4440.v39a_9eb_b_c6b_4d</version>
         <type>pom</type>
         <scope>import</scope>
       </dependency>
@@ -138,30 +137,6 @@
               <goal>apply</goal>
             </goals>
             <phase>process-sources</phase>
-          </execution>
-        </executions>
-      </plugin>
-
-      <plugin>
-        <groupId>org.apache.maven.plugins</groupId>
-        <artifactId>maven-enforcer-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>enforce-maven</id>
-            <goals>
-              <goal>enforce</goal>
-            </goals>
-            <configuration>
-              <rules>
-                <requireJavaVersion>
-                  <version>[11,)</version>
-                </requireJavaVersion>
-                <requireMavenVersion>
-                  <version>[${maven.version},)</version>
-                </requireMavenVersion>
-                <dependencyConvergence />
-              </rules>
-            </configuration>
           </execution>
         </executions>
       </plugin>
