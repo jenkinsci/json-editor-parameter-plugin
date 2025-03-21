@@ -21,7 +21,7 @@ import org.kohsuke.accmod.restrictions.DoNotUse;
 import org.kohsuke.stapler.DataBoundConstructor;
 import org.kohsuke.stapler.DataBoundSetter;
 import org.kohsuke.stapler.QueryParameter;
-import org.kohsuke.stapler.StaplerRequest;
+import org.kohsuke.stapler.StaplerRequest2;
 import org.kohsuke.stapler.verb.POST;
 
 @EqualsAndHashCode(callSuper = true)
@@ -98,7 +98,7 @@ public class JsonEditorParameterDefinition extends SimpleParameterDefinition {
     }
 
     @Override
-    public JsonEditorParameterValue createValue(StaplerRequest request, JSONObject jo) {
+    public JsonEditorParameterValue createValue(StaplerRequest2 request, JSONObject jo) {
         JsonEditorParameterValue value = request.bindJSON(JsonEditorParameterValue.class, jo);
         value.setDescription(getDescription());
         return value;
