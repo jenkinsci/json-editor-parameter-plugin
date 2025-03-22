@@ -5,7 +5,7 @@
   <parent>
     <groupId>org.jenkins-ci.plugins</groupId>
     <artifactId>plugin</artifactId>
-    <version>4.78</version>
+    <version>4.82</version>
     <relativePath />
   </parent>
 
@@ -38,7 +38,8 @@
     <gitHubRepo>jenkinsci/${project.artifactId}-plugin</gitHubRepo>
 
     <!-- https://www.jenkins.io/doc/developer/plugin-development/choosing-jenkins-baseline/ -->
-    <jenkins.version>2.426.3</jenkins.version>
+    <jenkins.baseline>2.426</jenkins.baseline>
+    <jenkins.version>${jenkins.baseline}.3</jenkins.version>
     <maven.version>3.8.1</maven.version>
     <revision>1.0</revision>
     <spotless.check.skip>false</spotless.check.skip>
@@ -49,10 +50,16 @@
       <dependency>
         <!-- Pick up common dependencies for the selected LTS line: https://github.com/jenkinsci/bom#usage -->
         <groupId>io.jenkins.tools.bom</groupId>
-        <artifactId>bom-2.426.x</artifactId>
+        <artifactId>bom-${jenkins.baseline}.x</artifactId>
         <version>3105.v672692894683</version>
         <type>pom</type>
         <scope>import</scope>
+      </dependency>
+
+      <dependency>
+        <groupId>org.webjars.npm</groupId>
+        <artifactId>bootstrap</artifactId>
+        <version>5.3.3</version>
       </dependency>
 
       <dependency>
@@ -183,6 +190,18 @@
                     </org.codehaus.plexus.components.io.filemappers.RegExpFileMapper>
                   </fileMappers>
                 </artifactItem>
+                <artifactItem>
+                  <groupId>org.webjars.npm</groupId>
+                  <artifactId>bootstrap</artifactId>
+                  <includes>**/dist/css/bootstrap.min.css</includes>
+                  <fileMappers>
+                    <org.codehaus.plexus.components.io.filemappers.FlattenFileMapper />
+                    <org.codehaus.plexus.components.io.filemappers.RegExpFileMapper>
+                      <pattern>bootstrap.min.css</pattern>
+                      <replacement>bootstrap_min.css</replacement>
+                    </org.codehaus.plexus.components.io.filemappers.RegExpFileMapper>
+                  </fileMappers>
+                </artifactItem>
               </artifactItems>
               <outputDirectory>target/classes/io/jenkins/plugins/json_editor_parameter/JsonEditorParameterDefinition/</outputDirectory>
             </configuration>
@@ -193,7 +212,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-pmd-plugin</artifactId>
-        <version>3.21.2</version>
+        <version>3.22.0</version>
         <configuration>
           <compileSourceRoots>src/main/java</compileSourceRoots>
         </configuration>

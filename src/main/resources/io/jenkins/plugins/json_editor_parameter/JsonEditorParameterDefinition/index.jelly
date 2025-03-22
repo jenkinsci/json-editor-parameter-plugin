@@ -11,6 +11,7 @@
     </div>
   </f:entry>
 
+  <st:adjunct includes="io.jenkins.plugins.json_editor_parameter.JsonEditorParameterDefinition.bootstrap_min" />
   <st:adjunct includes="io.jenkins.plugins.json_editor_parameter.JsonEditorParameterDefinition.jsoneditor" />
   <st:adjunct includes="io.jenkins.plugins.json_editor_parameter.JsonEditorParameterDefinition.jsoneditor_min" />
 
