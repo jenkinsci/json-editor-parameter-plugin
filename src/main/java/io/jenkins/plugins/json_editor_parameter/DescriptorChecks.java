@@ -1,17 +1,43 @@
-package io.jenkins.plugins.json_editor_parameter;
-
 import hudson.util.FormValidation;
 import org.kohsuke.stapler.QueryParameter;
 
+import javax.annotation.Nonnull;
+
 /**
- * Explicitly declare methods that Jelly will invoke
+ * Interface for validating JSON editor parameter fields in Jenkins.
+ * Methods are explicitly defined for use in Jelly UI validation.
  */
 public interface DescriptorChecks {
-    FormValidation doCheckName(@QueryParameter String name);
+    
+    /**
+     * Validates the provided name parameter.
+     *
+     * @param name the name of the parameter
+     * @return FormValidation result
+     */
+    FormValidation doCheckName(@QueryParameter @Nonnull String name);
 
-    FormValidation doCheckOptions(@QueryParameter String options);
+    /**
+     * Validates the provided JSON options.
+     *
+     * @param options the JSON options string
+     * @return FormValidation result
+     */
+    FormValidation doCheckOptions(@QueryParameter @Nonnull String options);
 
-    FormValidation doCheckSchema(@QueryParameter String schema);
+    /**
+     * Validates the JSON schema.
+     *
+     * @param schema the JSON schema string
+     * @return FormValidation result
+     */
+    FormValidation doCheckSchema(@QueryParameter @Nonnull String schema);
 
-    FormValidation doCheckStartval(@QueryParameter String startval);
+    /**
+     * Validates the start value parameter.
+     *
+     * @param startval the start value
+     * @return FormValidation result
+     */
+    FormValidation doCheckStartval(@QueryParameter @Nonnull String startval);
 }
