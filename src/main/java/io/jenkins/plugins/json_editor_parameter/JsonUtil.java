@@ -76,9 +76,8 @@ public class JsonUtil {
             return true;
         }
 
-        if (object instanceof JSONObject) {
-            JSONObject jsonObject = (JSONObject) object;
-            return jsonObject.isNullObject();
+        if (object instanceof JSONObject jsonObject) {
+	        return jsonObject.isNullObject();
         }
         return false;
     }
