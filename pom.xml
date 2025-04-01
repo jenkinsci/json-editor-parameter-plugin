@@ -212,7 +212,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-pmd-plugin</artifactId>
-        <version>3.22.0</version>
+        <version>3.26.0</version>
         <configuration>
           <compileSourceRoots>src/main/java</compileSourceRoots>
         </configuration>
