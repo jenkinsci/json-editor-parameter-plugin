@@ -2,7 +2,55 @@
   margin: 5px 10px;
 }
 
-.je-modal {
-  z-index: 9999!important;
-  background-color: var(--input-color);
+/*
+ * bootstrap_min.css is attached with <st:adjunct>, which is page-level: Bootstrap's own `body`
+ * rule and colour tokens apply to the whole Jenkins page, not just to this parameter. Bootstrap
+ * 5.3 only serves its dark values under [data-bs-theme="dark"], and Jenkins never sets that
+ * attribute - so a user whose Jenkins theme is dark gets a white page with dark text on any build
+ * form that carries a JSON editor parameter.
+ *
+ * Binding Bootstrap's tokens to Jenkins' own theme variables fixes every theme at once, needs no
+ * JavaScript, and keeps the editor in the host's palette instead of Bootstrap's. It also survives
+ * a Bootstrap upgrade, which copying [data-bs-theme="dark"]'s palette here would not.
+ *
+ * :root:root outranks Bootstrap's own :root whichever stylesheet the page loads last.
+ */
+:root:root {
+  --bs-body-bg: var(--background);
+  --bs-body-color: var(--text-color);
+  --bs-emphasis-color: var(--text-color);
+  --bs-secondary-color: var(--text-color-secondary);
+  --bs-secondary-bg: var(--card-background);
+  --bs-tertiary-bg: var(--card-background);
+  --bs-border-color: var(--input-border);
+  --bs-link-color: var(--link-color);
+}
+
+/*
+ * Bootstrap fixes these by design, so the tokens above do not reach them. They keep the doubled
+ * :root too: Bootstrap's own .bg-light and .text-muted carry !important, so at equal specificity
+ * whichever sheet loads last wins. That is this file today, but it makes the rule depend on the
+ * adjunct order in index.jelly rather than on anything stated here.
+ */
+:root:root .bg-light,
+:root:root .bg-white,
+:root:root .bg-body-tertiary {
+  background-color: var(--card-background) !important;
+}
+
+:root:root .text-muted {
+  color: var(--text-color-secondary) !important;
+}
+
+/*
+ * json-editor appends its own <style> at runtime carrying
+ * `.je-modal { background-color: white; border: 1px solid black; }`. It lands after this file, so
+ * an unweighted declaration here never applies - which is why the existing var(--input-color)
+ * has had no effect and needs !important to take.
+ */
+:root:root .je-modal {
+  z-index: 9999 !important;
+  background-color: var(--input-color) !important;
+  color: var(--text-color);
+  border: 1px solid var(--input-border) !important;
 }
