@@ -26,14 +26,19 @@
   --bs-link-color: var(--link-color);
 }
 
-/* Bootstrap fixes these three by design, so the tokens above do not reach them. */
-.bg-light,
-.bg-white,
-.bg-body-tertiary {
+/*
+ * Bootstrap fixes these by design, so the tokens above do not reach them. They keep the doubled
+ * :root too: Bootstrap's own .bg-light and .text-muted carry !important, so at equal specificity
+ * whichever sheet loads last wins. That is this file today, but it makes the rule depend on the
+ * adjunct order in index.jelly rather than on anything stated here.
+ */
+:root:root .bg-light,
+:root:root .bg-white,
+:root:root .bg-body-tertiary {
   background-color: var(--card-background) !important;
 }
 
-.text-muted {
+:root:root .text-muted {
   color: var(--text-color-secondary) !important;
 }
 
@@ -43,7 +48,7 @@
  * an unweighted declaration here never applies - which is why the existing var(--input-color)
  * has had no effect and needs !important to take.
  */
-.je-modal {
+:root:root .je-modal {
   z-index: 9999 !important;
   background-color: var(--input-color) !important;
   color: var(--text-color);
