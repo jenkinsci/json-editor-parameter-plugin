@@ -6,8 +6,14 @@ import hudson.Util;
 import hudson.model.ParameterValue;
 import hudson.model.SimpleParameterDefinition;
 import hudson.util.FormValidation;
+import java.net.URI;
+import java.net.http.HttpClient;
+import java.net.http.HttpRequest;
+import java.net.http.HttpResponse;
+import java.time.Duration;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.logging.Logger;
 import java.util.regex.Pattern;
 import jenkins.model.Jenkins;
 import lombok.EqualsAndHashCode;
@@ -28,10 +34,13 @@ import org.kohsuke.stapler.verb.POST;
 @Getter
 public class JsonEditorParameterDefinition extends SimpleParameterDefinition {
 
+    private static final Logger LOGGER = Logger.getLogger(JsonEditorParameterDefinition.class.getName());
     private static final Pattern OK_NAME = Pattern.compile("[A-Za-z][\\w-]{0,63}");
+    private static final int URL_TIMEOUT = 10_000;
 
     private String schema;
     private String startval;
+    private String startvalUrl;
     private String options = "{}";
 
     @DataBoundConstructor
@@ -70,6 +79,11 @@ public class JsonEditorParameterDefinition extends SimpleParameterDefinition {
     }
 
     @DataBoundSetter
+    public void setStartvalUrl(String startvalUrl) {
+        this.startvalUrl = Util.fixEmptyAndTrim(startvalUrl);
+    }
+
+    @DataBoundSetter
     public void setOptions(String options) {
         checkValidJson(options, "options must be valid json");
         this.options = options;
@@ -78,11 +92,35 @@ public class JsonEditorParameterDefinition extends SimpleParameterDefinition {
     @Restricted(DoNotUse.class) // invoked from index.jelly
     public String getMergedOptions() {
         Map<String, Object> optionMap = new HashMap<>(JsonUtil.toMap(options));
-        if (startval != null) {
-            optionMap.put("startval", JsonUtil.toObject(startval));
+        String resolved = resolveStartval();
+        if (resolved != null) {
+            optionMap.put("startval", JsonUtil.toObject(resolved));
         }
         optionMap.put("schema", JsonUtil.toMap(schema));
         return JsonUtil.toJson(optionMap);
+    }
+
+    private String resolveStartval() {
+        if (startvalUrl == null) {
+            return startval;
+        }
+        try {
+            var client = HttpClient.newBuilder()
+                    .connectTimeout(Duration.ofMillis(URL_TIMEOUT))
+                    .build();
+            var request = HttpRequest.newBuilder(URI.create(startvalUrl))
+                    .timeout(Duration.ofMillis(URL_TIMEOUT))
+                    .build();
+            var response = client.send(request, HttpResponse.BodyHandlers.ofString());
+            if (response.statusCode() != 200) {
+                throw new IllegalStateException("HTTP " + response.statusCode());
+            }
+            JSONSerializer.toJSON(response.body()); // validate parseable
+            return response.body();
+        } catch (Exception e) {
+            LOGGER.warning("startvalUrl fetch failed, falling back to static startval: " + e.getMessage());
+            return startval;
+        }
     }
 
     @Override
@@ -91,6 +129,7 @@ public class JsonEditorParameterDefinition extends SimpleParameterDefinition {
             JsonEditorParameterDefinition def = new JsonEditorParameterDefinition(getName());
             def.setDescription(getDescription());
             def.setStartval(((JsonEditorParameterValue) defaultValue).getJson());
+            def.setStartvalUrl(startvalUrl);
             return def;
         } else {
             return this;
@@ -110,10 +149,11 @@ public class JsonEditorParameterDefinition extends SimpleParameterDefinition {
 
     @Override
     public JsonEditorParameterValue getDefaultParameterValue() {
-        if (startval == null) {
+        String resolved = resolveStartval();
+        if (resolved == null) {
             return null;
         }
-        return new JsonEditorParameterValue(getName(), startval, getDescription());
+        return new JsonEditorParameterValue(getName(), resolved, getDescription());
     }
 
     @Extension
@@ -160,6 +200,21 @@ public class JsonEditorParameterDefinition extends SimpleParameterDefinition {
                 return FormValidation.ok();
             }
             return isValidJson(startval, "startval must be valid json or empty");
+        }
+
+        @Override
+        @POST
+        public FormValidation doCheckStartvalUrl(@QueryParameter String startvalUrl) {
+            Jenkins.get().checkPermission(Jenkins.READ);
+            if (Util.fixEmptyAndTrim(startvalUrl) == null) {
+                return FormValidation.ok();
+            }
+            try {
+                URI.create(startvalUrl.trim()).toURL();
+                return FormValidation.ok();
+            } catch (Exception e) {
+                return FormValidation.error("startvalUrl must be a valid URL or empty");
+            }
         }
 
         @Override

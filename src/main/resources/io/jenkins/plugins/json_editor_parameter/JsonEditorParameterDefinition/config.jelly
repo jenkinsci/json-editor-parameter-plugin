@@ -16,6 +16,10 @@
     <f:textarea/>
   </f:entry>
 
+  <f:entry title='Start Values URL' field='startvalUrl'>
+    <f:textbox/>
+  </f:entry>
+
   <f:entry title='Options' field='options'>
     <f:textarea default='{}'/>
   </f:entry>

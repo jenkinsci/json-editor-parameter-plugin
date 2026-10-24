@@ -14,4 +14,6 @@ public interface DescriptorChecks {
     FormValidation doCheckSchema(@QueryParameter String schema);
 
     FormValidation doCheckStartval(@QueryParameter String startval);
+
+    FormValidation doCheckStartvalUrl(@QueryParameter String startvalUrl);
 }

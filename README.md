@@ -12,6 +12,9 @@ There are two principal configuration parameters: `schema`, which contains the j
 parameters which configure the form.  See [options](https://github.com/json-editor/json-editor#options) for additional
 information.
 
+Optionally, `startvalUrl` can be set to fetch the starting values from a URL each time the form is rendered,
+falling back to the static `startval` on error. Only users with Job/Configure permission can set this URL.
+
 ### Pipeline Example
 
 ```groovy
